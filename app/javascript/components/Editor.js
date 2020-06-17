@@ -35,9 +35,11 @@ class Editor extends React.Component {
     return (
       <div>
         <Header />
-        <EventList events={events} />
-        {/* 以下のpathにマッチする場合に、コンポーネントをレンダリングする */}
-        <PropsRoute path="/events/:id" component={Event} event={event} />
+        <div className="grid">
+          <EventList events={events} />
+          {/* 以下のpathにマッチする場合に、コンポーネントをレンダリングする */}
+          <PropsRoute path="/events/:id" component={Event} event={event} />
+        </div>
       </div>
     );
   }
