@@ -1,5 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class EventList extends React.Component {
   renderEvents() {
@@ -8,16 +9,18 @@ class EventList extends React.Component {
       (a, b) => new Date(b.event_date) - new Date(a.event_date),
     );
 
-    return events.map(event => (
+    return events.map((event) => (
       <li key={event.id}>
-        {event.event_date}
-        {' - '}
-        {event.event_type}
+        <Link to={`/events/${event.id}`}>
+          { event.event_date }
+          {' - '}
+          { event.event_type }
+        </Link>
       </li>
     ));
   }
 
-  render () {
+  render() {
     return (
       <section>
         <h2>Events</h2>
@@ -28,7 +31,7 @@ class EventList extends React.Component {
 }
 
 EventList.propTypes = {
-  events: PropTypes.arrayOf(PropTypes.object)
+  events: PropTypes.arrayOf(PropTypes.object),
 };
 
 EventList.defaultProps = {
