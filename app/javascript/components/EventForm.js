@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmptyObject, validateEvent } from '../helpers/helper';
+import Pikaday from 'pikaday';
+import 'pikaday/css/pikaday.css';
+import { formatDate, isEmptyObject, validateEvent } from '../helpers/helper';
 
 class EventForm extends React.Component {
   constructor(props) {
@@ -13,6 +15,32 @@ class EventForm extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    // Refを作成(初期化時点ではcurrent属性の値はnull)
+    this.dateInput = React.createRef();
+  }
+
+  componentDidMount() {
+    new Pikaday({
+      // renderメソッドの要素にrefが渡されると、そのノードへの参照はrefのcurrent属性でアクセスできる
+      // refの更新は`componentDidMount`か`componentDidUpdate`の前に行われる
+      field: this.dateInput.current,
+      onSelect: (date) => {
+        const formattedDate = formatDate(date);
+        this.dateInput.current.value = formattedDate;
+        this.updateEvent('event_date', formattedDate);
+      },
+    });
+  }
+
+  updateEvent(key, value) {
+    this.setState((prevState) => ({
+      event: {
+        // `setState()`のマージは浅く(shallow)行われる
+        // https://medium.com/@imrobinkim/how-state-updates-are-merged-in-react-e07fc669fec2
+        ...prevState.event,
+        [key]: value,
+      },
+    }));
   }
 
   handleSubmit(e) {
@@ -30,15 +58,7 @@ class EventForm extends React.Component {
     const { target } = event;
     const { name } = target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-
-    this.setState((prevState) => ({
-      // `setState()`のマージは浅く(shallow)行われる
-      // https://medium.com/@imrobinkim/how-state-updates-are-merged-in-react-e07fc669fec2
-      event: {
-        ...prevState.event,
-        [name]: value,
-      },
-    }));
+    this.updateEvent(name, value);
   }
 
   renderErrors() {
@@ -84,7 +104,9 @@ class EventForm extends React.Component {
                 type="text"
                 id="event_date"
                 name="event_date"
-                onChange={this.handleInputChange}
+                // ref属性を用いてReact要素に紐付け
+                ref={this.dateInput}
+                autoComplete="off"
               />
             </label>
           </div>
