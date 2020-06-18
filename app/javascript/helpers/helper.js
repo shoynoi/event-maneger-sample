@@ -1,3 +1,5 @@
+import { error } from './notifications';
+
 // メソッド内部でthisを参照していないメソッドをヘルパーとして切り出した
 // https://eslint.org/docs/rules/class-methods-use-this
 export const isEmptyObject = (obj) => Object.keys(obj).length === 0;
@@ -34,4 +36,9 @@ export const formatDate = (d) => {
   const DD = `0${d.getDate()}`.slice(-2);
 
   return `${YYYY}-${MM}-${DD}`;
+};
+
+export const handleAjaxError = (err) => {
+  error('Something went wrong');
+  console.warn(err);
 };
