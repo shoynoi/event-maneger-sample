@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Event = ({ event }) => (
+const Event = ({ event, onDelete }) => (
   <div className="eventContainer">
     <h2>
       {event.event_date}
       {' - '}
       {event.event_type}
+      <button className="delete" type="button" onClick={() => onDelete(event.id)}>
+        Delete
+      </button>
     </h2>
     <ul>
       <li>
@@ -46,6 +49,7 @@ const Event = ({ event }) => (
 Event.propTypes = {
   // 指定された形式を満たしているどうかをチェック
   event: PropTypes.shape(),
+  onDelete: PropTypes.func.isRequired,
 };
 
 // `props`に値が渡されなかった際のデフォルト値を定義(また、defaultPropsにも型チェックが適用される)
