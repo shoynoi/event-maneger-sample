@@ -4,6 +4,8 @@ import { error } from './notifications';
 // https://eslint.org/docs/rules/class-methods-use-this
 export const isEmptyObject = (obj) => Object.keys(obj).length === 0;
 
+const isValidDate = (dateObj) => !Number.isNaN(Date.parse(dateObj));
+
 export const validateEvent = (event) => {
   const errors = {};
 
@@ -12,6 +14,10 @@ export const validateEvent = (event) => {
   }
 
   if (event.event_date === '') {
+    errors.event_date = 'You must enter a valid date';
+  }
+
+  if (!isValidDate(event.event_date)) {
     errors.event_date = 'You must enter a valid date';
   }
 
