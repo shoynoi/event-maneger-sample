@@ -3,13 +3,41 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 class EventList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchTerm: '',
+    };
+
+    this.searchInput = React.createRef();
+    this.updateSearchTerm = this.updateSearchTerm.bind(this);
+  }
+
+  updateSearchTerm() {
+    this.setState({ searchTerm: this.searchInput.current.value });
+  }
+
+  matchSearchTerm(obj) {
+    const {
+      id, published, created_at, updated_at, ...rest
+    } = obj;
+    const { searchTerm } = this.state;
+
+    return Object.values(rest).some(
+      (value) => value.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1,
+    );
+  }
+
   renderEvents() {
     const { activeId, events } = this.props;
+    const filteredEvents = events
+      .filter((el) => this.matchSearchTerm(el))
+      .sort((a, b) => new Date(b.event_date) - new Date(a.event_date));
     events.sort(
       (a, b) => new Date(b.event_date) - new Date(a.event_date),
     );
 
-    return events.map((event) => (
+    return filteredEvents.map((event) => (
       <li key={event.id}>
         <Link to={`/events/${event.id}`} className={activeId === event.id ? 'active' : ''}>
           { event.event_date }
@@ -27,6 +55,15 @@ class EventList extends React.Component {
           Events
           <Link to="/events/new">New Event</Link>
         </h2>
+
+        <input
+          type="text"
+          className="search"
+          placeholder="Search"
+          ref={this.searchInput}
+          onKeyUp={this.updateSearchTerm}
+        />
+
         <ul>{this.renderEvents()}</ul>
       </section>
     );
